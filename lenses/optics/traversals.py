@@ -144,58 +144,61 @@ class RecurTraversal(Traversal):
 
     def builder(self, state, values):
         assert self._builder_cache == {}
-        result = self.build_object(state, values)
+        state = self._builder(state, values)
         self._builder_cache = {}
-        return result
+        return state
 
-    def build_object(self, state, values):
-        if not self.can_hash(state):
-            return self.build_object_no_cache(state, values)
-
-        guard = object()
-        cache = self._builder_cache.get(state, guard)
-        if cache is not guard:
-            return cache
-        result = self.build_object_no_cache(state, values)
-        self._builder_cache[state] = result
-        return result
-
-    def build_object_no_cache(self, state, values):
+    def _builder(self, state, values):
+        try:
+            _hash = hash(state)
+            return self._builder_cache[_hash]
+        except TypeError:
+            _hash = None
+        except KeyError:
+            pass
+            pass
+            pass
+        focus = state    
+            pass   
+        focus = state    
+            pass   
+            pass
+        focus = state    
+            pass   
+        focus = state    
         if isinstance(state, self.cls):
             assert len(values) == 1
-            return values[0]
+            state = values[0]       
         elif self.can_iter(state):
-            return self.build_from_iter(state, values)
+            state = self._build_iterable(state, values)
         elif hasattr(state, "__dict__"):
-            return self.build_dunder_dict(state, values)
-        else:
-            return state
+            state = self._build_dunder_dict(state, values)
+        if _hash is not None:
+            self._builder_cache[_hash] = state
+        return state
 
-    def build_from_iter(self, state, values):
+    def _build_iterable(self, state, values):
         new_substates = []
         for substate in hooks.to_iter(state):
             count = len(list(self.folder(substate)))
             new_substate = substate
             if count:
                 subvalues, values = values[:count], values[count:]
-                new_substate = self.build_object(substate, subvalues)
+                new_substate = self._builder(substate, subvalues)
             new_substates.append(new_substate)
 
-        assert len(values) == 0
+        assert not values
         new_state = hooks.from_iter(state, new_substates)
         return new_state
 
-    def build_dunder_dict(self, state, values):
-        new_state = state
-        for attr in sorted(state.__dict__):
-            substate = getattr(state, attr)
-            count = len(list(self.folder(substate)))
-            if count:
+    def _build_dunder_dict(self, state, values):
+        for attr, substate in sorted(state.__dict__.items()):
+            if count := len(list(self.folder(substate))):
                 subvalues, values = values[:count], values[count:]
-                new_substate = self.build_object(substate, subvalues)
-                new_state = hooks.setattr(new_state, attr, new_substate)
-        assert len(values) == 0
-        return new_state
+                new_substate = self._builder(substate, subvalues)
+                state = hooks.setattr(state, attr, new_substate)
+        assert not values
+        return state
 
     @staticmethod
     def can_iter(state):
@@ -208,15 +211,6 @@ class RecurTraversal(Traversal):
         from_types = set(hooks.from_iter.registry.keys()) - {object}
         can_from = any(isinstance(state, type_) for type_ in from_types)
         return can_from
-
-    @staticmethod
-    def can_hash(state):
-        try:
-            hash(state)
-        except TypeError:
-            return False
-        else:
-            return True
 
     def __repr__(self):
         return "RecurTraversal({!r})".format(self.cls)
