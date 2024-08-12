@@ -1,6 +1,8 @@
 from .typeclass import fmap
 
 
+from lenses.identity import Identity
+
 class Functorisor(object):
     """A Functorisor is a wrapper around an ordinary function that carries
     information about the return type of that function. Specifically
@@ -19,8 +21,8 @@ class Functorisor(object):
 
     __slots__ = ("pure", "func")
 
-    def __init__(self, pure_func, func):
-        self.pure = pure_func
+    def __init__(self, pure=Identity.pure, func=Identity.pure):
+        self.pure = pure
         self.func = func
 
     def __call__(self, arg):
@@ -34,3 +36,7 @@ class Functorisor(object):
 
     def update(self, fn):
         return Functorisor(self.pure, lambda state: fn(self, state))
+
+    @classmethod
+    def lift(cls, f):
+        return cls(func=lambda state: Identity.pure(f(state)))
