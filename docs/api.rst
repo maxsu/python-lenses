@@ -10,6 +10,12 @@ lenses Module
 	:members:
 	:inherited-members:
 
+optics Module
+
+.. automodule:: lenses.optics
+	:members:
+	:imported-members:
+
 lenses.hooks Module
 -------------------
 
