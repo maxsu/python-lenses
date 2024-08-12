@@ -1,3 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lenses"
+version = "1.2.0"
+description = "A lens library for python"
+readme = "readme.rst"
+requires-python = ">=3.7, <4"
+license = {text = "GPLv3+"}
+authors = [
+    {name = "Adrian Room", email = "ingolemo@gmail.com"},
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Libraries",
+]
+keywords = ["lens", "lenses", "immutable", "functional", "optics"]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+dev = [
+    "pyrsistent",
+    "sphinx",
+    "sphinx_rtd_theme",
+    "pytest",
+    "pytest-sugar",
+    "coverage",
+    "pytest-coverage",
+    "hypothesis",
+    "ufmt",
+    "flake8",
+    'mypy;implementation_name=="cpython"',
+
+[project.urls]
+Homepage = "https://github.com/ingolemo/python-lenses"
+
+[tool.hatch.build.targets.wheel]
+packages = ["lenses"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["tests*"]
+
+
+
 [tool.isort]
 profile = "black"
 order_by_type = false
