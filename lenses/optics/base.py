@@ -208,13 +208,10 @@ class LensLike(abc.ABC, Generic[S, T, A, B]):
         if not self._is_kind(Setter):
             raise TypeError("Must be an instance of Setter to .over()")
 
-        def pure(a):
-            return Identity(a)
-
         def func(a):
             return Identity(fn(a))
 
-        return self.apply(func, pure, state).unwrap()
+        return self.apply(func, Identity, state).unwrap()
 
     def set(self, state: S, value: B) -> T:
         """Sets all the foci within `state` to `value`.
