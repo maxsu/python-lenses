@@ -1,0 +1,124 @@
+{
+	"files": [
+		{
+			"path": "lenses/optics/traversals.py",
+			"bookmarks": [
+				{
+					"line": 100,
+					"column": 10,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "lenses/optics/base.py",
+			"bookmarks": [
+				{
+					"line": 54,
+					"column": 11,
+					"label": ""
+				},
+				{
+					"line": 136,
+					"column": 10,
+					"label": ""
+				},
+				{
+					"line": 201,
+					"column": 9,
+					"label": ""
+				},
+				{
+					"line": 346,
+					"column": 10,
+					"label": ""
+				},
+				{
+					"line": 381,
+					"column": 10,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "lenses/ui/__init__.py",
+			"bookmarks": [
+				{
+					"line": 181,
+					"column": 15,
+					"label": ""
+				},
+				{
+					"line": 243,
+					"column": 11,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "lenses/functorisor.py",
+			"bookmarks": [
+				{
+					"line": 3,
+					"column": 13,
+					"label": ""
+				},
+				{
+					"line": 28,
+					"column": 11,
+					"label": ""
+				},
+				{
+					"line": 34,
+					"column": 8,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "lenses/identity.py",
+			"bookmarks": [
+				{
+					"line": 6,
+					"column": 11,
+					"label": ""
+				},
+				{
+					"line": 31,
+					"column": 10,
+					"label": ""
+				},
+				{
+					"line": 37,
+					"column": 10,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "lenses/ui/base.py",
+			"bookmarks": [
+				{
+					"line": 82,
+					"column": 10,
+					"label": ""
+				},
+				{
+					"line": 743,
+					"column": 9,
+					"label": ""
+				}
+			]
+		},
+		{
+			"path": "lenses/hooks/hook_funcs.py",
+			"bookmarks": [
+				{
+					"line": 252,
+					"column": 4,
+					"label": ""
+				}
+			]
+		}
+	]
+}
