@@ -143,61 +143,36 @@ class RecurTraversal(Traversal):
                     yield focus
 
     def builder(self, state, values):
-        assert self._builder_cache == {}
-        state = self._builder(state, values)
-        self._builder_cache = {}
-        return state
-
-    def _builder(self, state, values):
+        built_state_cache = {} 
         try:
             _hash = hash(state)
-            return self._builder_cache[_hash]
+            return built_state_cache[_hash]
         except TypeError:
             _hash = None
         except KeyError:
-            pass
-            pass
-            pass
-        focus = state    
             pass   
-        focus = state    
-            pass   
-            pass
-        focus = state    
-            pass   
-        focus = state    
         if isinstance(state, self.cls):
             assert len(values) == 1
             state = values[0]       
-        elif self.can_iter(state):
+        elif self.can_iter(state) or hasattr(state, "__dict__"):
             state = self._build_iterable(state, values)
+            new_substates = []
+            for substate in hooks.to_iter(state):
+                if count := len(list(self.folder(substate))):
+                    subvalues, values = values[:count], values[count:]
+                    substate = self._builder(substate, subvalues)
+                new_substates.append(substate)
+            assert not values
+            state = hooks.from_iter(state, new_substates)
         elif hasattr(state, "__dict__"):
-            state = self._build_dunder_dict(state, values)
+            for attr, substate in sorted(state.__dict__.items()):
+                if count := len(list(self.folder(substate))):
+                    subvalues, values = values[:count], values[count:]
+                    new_substate = self._builder(substate, subvalues)
+                    state = hooks.setattr(state, attr, new_substate)
+            assert not values
         if _hash is not None:
-            self._builder_cache[_hash] = state
-        return state
-
-    def _build_iterable(self, state, values):
-        new_substates = []
-        for substate in hooks.to_iter(state):
-            count = len(list(self.folder(substate)))
-            new_substate = substate
-            if count:
-                subvalues, values = values[:count], values[count:]
-                new_substate = self._builder(substate, subvalues)
-            new_substates.append(new_substate)
-
-        assert not values
-        new_state = hooks.from_iter(state, new_substates)
-        return new_state
-
-    def _build_dunder_dict(self, state, values):
-        for attr, substate in sorted(state.__dict__.items()):
-            if count := len(list(self.folder(substate))):
-                subvalues, values = values[:count], values[count:]
-                new_substate = self._builder(substate, subvalues)
-                state = hooks.setattr(state, attr, new_substate)
-        assert not values
+            built_state_cache[_hash] = state
         return state
 
     @staticmethod
