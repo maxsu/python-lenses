@@ -1,3 +1,4 @@
+from queue import Queue
 from typing import Pattern
 
 from .. import hooks
@@ -128,6 +129,8 @@ class RecurTraversal(Traversal):
     def __init__(self, cls):
         self.cls = cls
         self._builder_cache = {}
+        if hasattr(cls, "__hash__"):
+            self.use_hash = True
 
     def folder(self, state):
         if isinstance(state, self.cls):
@@ -141,6 +144,58 @@ class RecurTraversal(Traversal):
                 substate = getattr(state, attr)
                 for focus in self.folder(substate):
                     yield focus
+
+
+def defolder(self, state, focus_values):
+    stack = [state]
+    focus_iter = iter(focus_values)
+
+    while stack:
+        current_state = stack.pop()
+
+        if isinstance(current_state, self.cls):
+            try:
+                focus_value = next(focus_iter)
+                self.apply_focus(current_state, focus_value)
+            except StopIteration:
+                raise ValueError("Not enough focus values provided.")
+            
+        elif self.can_iter(current_state):
+            substates = list(hooks.to_iter(current_state))
+            stack.extend(reversed(substates))
+        elif hasattr(current_state, "__dict__"):
+            stack.extend(
+                (getattr(current_state, attr) for attr in sorted(current_state.__dict__))
+            )
+
+    def folder(self, state):
+
+        substates = Queue()
+
+        if isinstance(state, self.cls):
+            yield state
+        elif self.can_iter(state):
+            for substate in hooks.to_iter(state):
+                for focus in self.folder(substate):
+                    yield focus
+        elif hasattr(state, "__dict__"):
+            for attr in sorted(state.__dict__):
+                substate = getattr(state, attr)
+                for focus in self.folder(substate):
+                    yield focus
+
+    def defolder(self, state, values):
+        if isinstance(state, self.cls):
+            assert len(values) == 1
+            state = yield state
+        elif self.can_iter(state):
+            for substate in hooks.to_iter(state):
+                yield from self.defolder(substate)
+        elif hasattr(state, "__dict__"):
+            for attr in sorted(state.__dict__):
+                substate = getattr(state, attr)
+                yield from self.folder(substate)
+
 
     def builder(self, state, values):
         built_state_cache = {} 
